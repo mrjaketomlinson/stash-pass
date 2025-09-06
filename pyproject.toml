@@ -1,0 +1,25 @@
+[build-system]
+requires = [
+    "setuptools>=80.9.0,<80.10.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stash-pass"
+description = "A CLI for locally and securly storing passwords."
+readme = "README.md"
+version = "0.0.1"
+requires-python = ">=3.9"
+dependencies = [
+    "typer>=0.16.0,<0.17.0",
+    "cryptography>=45.0.7,<45.1.0",
+]
+authors = [
+    {name = "Jacob Tomlinson", email = "jacob.tomlinson21@gmail.com"}
+]
+maintainers = [
+    {name = "Jacob Tomlinson", email = "jacob.tomlinson21@gmail.com"}
+]
+
+[project.scripts]
+stash-pass = "stash_pass.cli:main"
