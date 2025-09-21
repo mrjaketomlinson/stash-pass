@@ -1,5 +1,6 @@
-from ..utils.crypto import load_vault, save_vault, get_fernet
+from ..utils.crypto import load_vault, save_vault, get_fernet, SALT_FILE
 import getpass
+import sys
 
 
 class Vault:
@@ -10,13 +11,25 @@ class Vault:
 
     def __init__(self):
         """
-        Initializes the Vault by prompting the user for their master password
-        and deriving the Fernet encryption key.
+        Initializes the Vault.
         """
-        master_password = ""
-        while not master_password.strip():
-            master_password = getpass.getpass("Enter master password (non-empty): ")
-        self.fernet = get_fernet(master_password)
+        self.fernet = None
+
+    def ensure_unlocked(self):
+        """
+        Prompts for the master password and initializes Fernet if not already unlocked.
+        If the master password is not set, instructs the user to run the settings set-master-password command.
+        """
+        if not SALT_FILE.exists():
+            print(
+                "[!] Master password is not set. Please run: stash-pass settings set-master-password"
+            )
+            sys.exit(1)
+        if self.fernet is None:
+            master_password = ""
+            while not master_password.strip():
+                master_password = getpass.getpass("Enter master password (non-empty): ")
+            self.fernet = get_fernet(master_password)
 
     def add(self, name: str, password: str):
         """
