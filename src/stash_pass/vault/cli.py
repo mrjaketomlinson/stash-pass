@@ -5,6 +5,8 @@ from .core import Vault
 import pyperclip
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import InvalidToken
+import string
+import random
 
 app = typer.Typer(help="Manage stored passwords")
 vault = Vault()
@@ -14,6 +16,7 @@ def require_master_password(func):
     """
     Decorator to ensure the master password is entered before running secure commands.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         vault.ensure_unlocked()
@@ -97,3 +100,32 @@ def delete_password(
         typer.echo("[!] Incorrect master password.")
     except InvalidToken:
         typer.echo("[!] Incorrect master password.")
+
+
+@app.command("generate-password")
+def generate_password(
+    length: int = typer.Option(16, help="Length of the generated password."),
+    lowercase: bool = typer.Option(True, help="Include lowercase letters."),
+    uppercase: bool = typer.Option(True, help="Include uppercase letters."),
+    numbers: bool = typer.Option(True, help="Include numbers."),
+    special: bool = typer.Option(True, help="Include special characters."),
+):
+    """
+    Generate a random password and copy it to the clipboard.
+    """
+    charset = ""
+    if lowercase:
+        charset += string.ascii_lowercase
+    if uppercase:
+        charset += string.ascii_uppercase
+    if numbers:
+        charset += string.digits
+    if special:
+        charset += string.punctuation
+    if not charset:
+        typer.echo("[!] At least one character type must be selected.")
+        raise typer.Exit()
+    password = "".join(random.choice(charset) for _ in range(length))
+
+    pyperclip.copy(password)
+    typer.echo(f"[+] Generated password copied to clipboard: {password}")

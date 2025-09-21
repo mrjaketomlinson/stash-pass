@@ -45,7 +45,7 @@ class Vault:
         vault = load_vault()
         if name in vault:
             raise ValueError(f"Entry for '{name}' already exists.")
-        vault[name] = self.fernet.encrypt(password.encode()).decode()
+        vault[name] = self.fernet.encrypt(password.encode()).decode() # type: ignore
         save_vault(vault)
 
     def get(self, name: str) -> str:
@@ -64,7 +64,7 @@ class Vault:
         vault = load_vault()
         if name not in vault:
             raise KeyError(f"No entry found for '{name}'.")
-        return self.fernet.decrypt(vault[name].encode()).decode()
+        return self.fernet.decrypt(vault[name].encode()).decode() # type: ignore
 
     def list_accounts(self):
         """

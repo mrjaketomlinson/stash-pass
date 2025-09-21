@@ -76,8 +76,8 @@ def change_master_password() -> None:
 
     # Re-encrypt all entries
     for k, v in vault_data.items():
-        decrypted = fernet_old.decrypt(v.encode())
-        vault_data[k] = fernet_new.encrypt(decrypted).decode()
+        decrypted = fernet_old.decrypt(v.encode()) # type: ignore
+        vault_data[k] = fernet_new.encrypt(decrypted).decode() # type: ignore
 
     save_vault(vault_data)
     typer.echo("[+] Master password changed successfully.")
